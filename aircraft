@@ -1,0 +1,5 @@
+import json
+
+def load_aircraft(aircraft_id="B738"):
+    with open("backend/models/b738.json") as f:
+        return json.load(f)
