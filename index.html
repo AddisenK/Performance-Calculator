@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AmeriFed Performance</title>
+</head>
+<body>
+  <h1>AmeriFed Performance Calculator</h1>
+
+  <button onclick="run()">Run Takeoff</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    async function run() {
+      const res = await fetch("http://localhost:8000/takeoff?icao=YSSY&runway=16R&weight=65000");
+      const data = await res.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
