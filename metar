@@ -1,0 +1,19 @@
+import requests
+import re
+
+def fetch_metar(icao: str) -> str:
+    url = f"https://aviationweather.gov/api/data/metar?ids={icao}&format=raw"
+    r = requests.get(url, timeout=5)
+    return r.text.strip()
+
+def parse_metar(raw: str) -> dict:
+    wind = re.search(r'(\d{3})(\d{2})(G\d{2})?KT', raw)
+    temp = re.search(r'(-?\d{2})/(-?\d{2})', raw)
+    qnh = re.search(r'Q(\d{4})', raw)
+
+    return {
+        "wind_dir": int(wind.group(1)) if wind else 0,
+        "wind_speed": int(wind.group(2)) if wind else 0,
+        "temperature": int(temp.group(1)) if temp else 15,
+        "qnh": int(qnh.group(1)) if qnh else 1013
+    }
