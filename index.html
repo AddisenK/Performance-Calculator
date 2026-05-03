@@ -6,74 +6,131 @@
     <title>AmeriFed Performance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         
         body {
             font-family: 'Inter', system_ui, sans-serif;
-            background: #0a1421;
-            color: #e2e8f0;
+            background: #0a0f1c;
+            color: #e0f2fe;
         }
-        .title-font {
-            font-family: 'Space Grotesk', sans-serif;
+        
+        .logo-gradient {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
+
         .card {
-            background: #13233a;
-            border: 1px solid #334155;
-        }
-        .display {
-            font-family: ui-monospace, monospace;
+            background: #111827;
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.5);
         }
     </style>
 </head>
-<body class="min-h-screen pb-20">
-    <div class="max-w-5xl mx-auto px-4 py-8">
+<body class="min-h-screen flex items-center justify-center p-6">
+    
+    <div class="w-full max-w-2xl">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-12">
             <div class="flex items-center gap-x-4">
-                <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-fuchsia-500 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-lg">AF</div>
+                <div class="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold shadow-inner">
+                    AF
+                </div>
                 <div>
-                    <h1 class="title-font text-4xl font-semibold tracking-tight">AmeriFed Performance</h1>
-                    <p class="text-slate-400 text-sm">Virtual Performance Tool</p>
+                    <div class="text-3xl font-semibold tracking-tight">AmeriFed Performance</div>
+                    <div class="text-slate-400 text-sm -mt-1">Virtual Performance Tool</div>
                 </div>
             </div>
-            <div class="text-xs bg-emerald-900/50 text-emerald-400 px-4 py-2 rounded-2xl border border-emerald-700">
-                <i class="fas fa-circle"></i> Connected
+            
+            <div class="flex items-center gap-x-2 bg-emerald-900/50 text-emerald-400 text-sm font-medium px-5 py-2 rounded-3xl border border-emerald-700">
+                <div class="w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+                Connected
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- Input Panel -->
-            <div class="lg:col-span-5">
-                <div class="card rounded-3xl p-8">
-                    <h2 class="text-cyan-400 font-semibold text-xl mb-6 flex items-center gap-x-2">
-                        <i class="fas fa-plane-departure"></i> Takeoff Calculation
-                    </h2>
+        <!-- Main Card -->
+        <div class="card rounded-3xl p-8 max-w-md mx-auto">
+            <div class="flex items-center gap-x-3 mb-8">
+                <i class="fas fa-plane-departure text-cyan-400 text-2xl"></i>
+                <h2 class="text-2xl font-semibold text-cyan-400">Takeoff Calculation</h2>
+            </div>
 
-                    <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm text-slate-400 mb-2">Aircraft</label>
-                            <select id="aircraft" class="w-full bg-slate-900 border border-slate-600 rounded-2xl p-4 text-lg">
-                                <option value="B737-800">Boeing 737-800</option>
-                                <option value="B737-MAX8">Boeing 737 MAX 8</option>
-                                <option value="A320-200">Airbus A320-200</option>
-                                <option value="B777-300ER">Boeing 777-300ER</option>
-                            </select>
-                        </div>
+            <!-- Aircraft -->
+            <div class="mb-6">
+                <label class="block text-slate-400 text-sm mb-2">Aircraft</label>
+                <select id="aircraft" 
+                        class="w-full bg-[#1e2937] border border-slate-600 rounded-2xl px-5 py-4 text-lg focus:outline-none focus:border-cyan-400 appearance-none">
+                    <option>Boeing 737-800</option>
+                    <option>Boeing 737 MAX 8</option>
+                    <option>Airbus A320-200</option>
+                    <option>Boeing 777-300ER</option>
+                    <option>Boeing 787-9</option>
+                </select>
+            </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm text-slate-400 mb-2">ICAO Airport</label>
-                                <input id="icao" value="YSSY" 
-                                       class="w-full bg-slate-900 border border-slate-600 rounded-2xl p-4 text-xl font-mono focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-slate-400 mb-2">Runway</label>
-                                <input id="runway" value="16R" 
-                                       class="w-full bg-slate-900 border border-slate-600 rounded-2xl p-4 text-xl font-mono focus:outline-none focus:border-cyan-400">
-                            </div>
-                        </div>
+            <!-- Airport & Runway -->
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-slate-400 text-sm mb-2">ICAO Airport</label>
+                    <input id="icao" value="YSSY" 
+                           class="w-full bg-[#1e2937] border border-slate-600 rounded-2xl px-5 py-4 text-xl font-mono focus:outline-none focus:border-cyan-400 text-center">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-sm mb-2">Runway</label>
+                    <input id="runway" value="16R" 
+                           class="w-full bg-[#1e2937] border border-slate-600 rounded-2xl px-5 py-4 text-xl font-mono focus:outline-none focus:border-cyan-400 text-center">
+                </div>
+            </div>
 
-                        <div>
-                            <label class="block text-sm text-slate-400 mb-2">
+            <!-- Compute Button -->
+            <button onclick="calculateTakeoff()" 
+                    class="mt-10 w-full bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-semibold text-lg py-5 rounded-2xl hover:brightness-110 transition-all active:scale-95">
+                COMPUTE TAKEOFF PERFORMANCE
+            </button>
+        </div>
+
+        <!-- Results Area (will appear after calculation) -->
+        <div id="results" class="hidden mt-8 card rounded-3xl p-8">
+            <h3 class="text-emerald-400 text-xl font-medium mb-6">Calculation Results</h3>
+            <div class="grid grid-cols-3 gap-6 text-center" id="vspeeds">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function calculateTakeoff() {
+            const icao = document.getElementById('icao').value;
+            const runway = document.getElementById('runway').value;
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.remove('hidden');
+            
+            const vspeedsHTML = `
+                <div>
+                    <div class="text-5xl font-bold text-emerald-400">142</div>
+                    <div class="text-xs text-slate-400 mt-1">V1</div>
+                </div>
+                <div>
+                    <div class="text-5xl font-bold text-white">148</div>
+                    <div class="text-xs text-slate-400 mt-1">VR</div>
+                </div>
+                <div>
+                    <div class="text-5xl font-bold text-fuchsia-400">154</div>
+                    <div class="text-xs text-slate-400 mt-1">V2</div>
+                </div>
+            `;
+            document.getElementById('vspeeds').innerHTML = vspeedsHTML;
+            
+            // Optional: Call your backend
+            // try {
+            //     const res = await fetch(`http://localhost:8000/takeoff?icao=${icao}&runway=${runway}`);
+            //     const data = await res.json();
+            //     // Update with real data
+            // } catch(e) {}
+        }
+
+        // Tailwind script already included via CDN
+    </script>
+</body>
+</html>
