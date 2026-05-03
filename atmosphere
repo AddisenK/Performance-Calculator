@@ -1,0 +1,21 @@
+import math
+
+def pressure_altitude(elevation_ft, qnh):
+    return elevation_ft + (1013 - qnh) * 30
+
+def isa_temp(pa):
+    return 15 - 2 * (pa / 1000)
+
+def density_altitude(pa, oat):
+    return pa + 120 * (oat - isa_temp(pa))
+
+def air_density(pa, oat):
+    temp_k = oat + 273.15
+    pressure = 101325 * (1 - 2.25577e-5 * pa)**5.25588
+    return pressure / (287.05 * temp_k)
+
+def wind_components(wind_dir, wind_speed, runway_heading):
+    angle = math.radians(wind_dir - runway_heading)
+    headwind = wind_speed * math.cos(angle)
+    crosswind = wind_speed * math.sin(angle)
+    return headwind, crosswind
