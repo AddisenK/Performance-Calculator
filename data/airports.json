@@ -1,0 +1,17 @@
+{
+  "YSSY": {
+    "elevation_ft": 21,
+    "runways": {
+      "16R": {
+        "heading": 160,
+        "length_m": 3962,
+        "slope": 0.3
+      },
+      "34L": {
+        "heading": 340,
+        "length_m": 3962,
+        "slope": -0.3
+      }
+    }
+  }
+}
