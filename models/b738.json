@@ -1,0 +1,11 @@
+{
+  "aircraft": "B738",
+  "wing_area": 124.6,
+  "cd": 0.045,
+  "cl": 1.6,
+  "mu_dry": 0.02,
+  "mu_wet": 0.04,
+  "thrust_kn": 240,
+  "v2_min": 140,
+  "vr_offset": -5
+}
