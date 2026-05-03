@@ -1,0 +1,123 @@
+import math
+from aircraft import load_aircraft
+from atmosphere import air_density, pressure_altitude, wind_components
+
+# --- Aerodynamics ---
+
+def lift(rho, v, cl, area):
+    return 0.5 * rho * v**2 * cl * area
+
+def drag(rho, v, cd, area):
+    return 0.5 * rho * v**2 * cd * area
+
+def acceleration(thrust, drag_force, weight, lift_force, mu):
+    return (thrust - drag_force - mu * (weight - lift_force)) / weight
+
+# --- Numerical Integration ---
+
+def integrate(v_start, v_end, params):
+    v = v_start
+    dist = 0
+
+    while v < v_end:
+        L = lift(params["rho"], v, params["cl"], params["area"])
+        D = drag(params["rho"], v, params["cd"], params["area"])
+        a = acceleration(params["thrust"], D, params["weight"], L, params["mu"])
+
+        if a <= 0:
+            return float("inf")
+
+        dt = 1 / a
+        dist += v * dt
+        v += 1
+
+    return dist
+
+# --- Performance Segments ---
+
+def accelerate_stop(v1, params):
+    accel_dist = integrate(0, v1, params)
+
+    # braking (basic, will refine later)
+    decel = 3.0
+    brake_dist = (v1**2) / (2 * decel)
+
+    return accel_dist + brake_dist
+
+def accelerate_go(v1, vr, params):
+    accel_all = integrate(0, v1, params)
+
+    params_oei = params.copy()
+    params_oei["thrust"] *= 0.5
+
+    accel_oei = integrate(v1, vr, params_oei)
+
+    climb_dist = 500  # placeholder
+
+    return accel_all + accel_oei + climb_dist
+
+# --- Speeds ---
+
+def compute_v2(weight, ac):
+    return ac["v2_min"] + (weight - 60000) * 0.0005
+
+def compute_vr(v2, ac):
+    return v2 + ac["vr_offset"]
+
+def solve_v1(vr, params):
+    best_v1 = 0
+    best_diff = float("inf")
+
+    for v1 in range(110, int(vr)):
+        asd = accelerate_stop(v1, params)
+        agd = accelerate_go(v1, vr, params)
+
+        diff = abs(asd - agd)
+
+        if diff < best_diff:
+            best_diff = diff
+            best_v1 = v1
+
+    return best_v1
+
+# --- Main Entry ---
+
+def compute_takeoff(airport, runway, metar, weight_kg):
+    ac = load_aircraft()
+
+    elevation = airport["elevation_ft"]
+    heading = runway["heading"]
+
+    pa = pressure_altitude(elevation, metar["qnh"])
+    rho = air_density(pa, metar["temperature"])
+
+    weight_n = weight_kg * 9.81
+    thrust = ac["thrust_kn"] * 1000
+
+    headwind, crosswind = wind_components(
+        metar["wind_dir"],
+        metar["wind_speed"],
+        heading
+    )
+
+    params = {
+        "rho": rho,
+        "weight": weight_n,
+        "thrust": thrust,
+        "area": ac["wing_area"],
+        "cd": ac["cd"],
+        "cl": ac["cl"],
+        "mu": ac["mu_dry"]
+    }
+
+    v2 = compute_v2(weight_kg, ac)
+    vr = compute_vr(v2, ac)
+    v1 = solve_v1(vr, params)
+
+    return {
+        "V1": round(v1),
+        "VR": round(vr),
+        "V2": round(v2),
+        "headwind": round(headwind, 1),
+        "crosswind": round(crosswind, 1)
+    }
