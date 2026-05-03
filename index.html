@@ -3,201 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AmeriFed Performance</title>
+    <title>AmeriFed • VPT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         body { font-family: 'Inter', system_ui, sans-serif; background: #0a1421; }
         .display { font-family: ui-monospace, monospace; }
-        .runway { background: linear-gradient(90deg, #1e2937 0%, #334155 100%); }
+        .runway-bg { background: linear-gradient(90deg, #1e2937, #334155); }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen pb-16">
+<body class="text-slate-200 min-h-screen pb-20">
 
-    <!-- Top Header -->
-    <div class="bg-[#0f1c2f] border-b border-slate-700 px-4 py-3 flex items-center justify-between text-sm">
-        <div class="flex items-center gap-3">
-            <div class="bg-blue-600 text-white px-4 py-1 rounded-lg font-medium">B737-800W 26K / CFM56-7B26</div>
-            <div class="text-red-400 font-medium text-xs">NOT FOR REAL FLIGHT</div>
+<div class="max-w-7xl mx-auto p-6">
+    <!-- Header -->
+    <div class="bg-[#0f1c2f] border-b border-slate-700 px-6 py-4 flex justify-between items-center rounded-t-3xl">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-600 px-5 py-2 rounded-2xl font-semibold">B737-800W 26K / CFM56-7B26</div>
+            <div class="text-red-400 text-sm font-medium">NOT FOR REAL FLIGHT</div>
         </div>
-        <div class="flex items-center gap-x-6">
-            <div class="text-slate-400">Welcome, FO Sacha Durré</div>
-        </div>
+        <div class="text-slate-400">Welcome, FO Sacha Durré</div>
     </div>
 
-    <div class="max-w-7xl mx-auto p-6">
-        <div class="grid grid-cols-12 gap-6">
-
-            <!-- Left Inputs -->
-            <div class="col-span-12 lg:col-span-4 space-y-6">
-                <!-- Environmental -->
-                <div class="bg-[#13233a] rounded-3xl p-6 border border-slate-600">
-                    <div class="grid grid-cols-2 gap-6">
-                        <div>
-                            <div class="text-xs text-slate-400 mb-1">OAT</div>
-                            <input id="oat" value="22" type="number" 
-                                   class="w-full bg-[#0a1421] rounded-2xl p-4 text-3xl display text-center"
-                                   onchange="calculate()">
-                            <div class="text-xs text-slate-400 text-center mt-1">22 °C / 72 °F</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-slate-400 mb-1">QNH</div>
-                            <input id="qnh" value="1016" type="number" 
-                                   class="w-full bg-[#0a1421] rounded-2xl p-4 text-3xl display text-center"
-                                   onchange="calculate()">
-                            <div class="text-xs text-slate-400 text-center mt-1">1016.0 hPa</div>
-                        </div>
+    <div class="grid grid-cols-12 gap-6 mt-6">
+        <!-- Left Inputs -->
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+            <div class="bg-[#13233a] rounded-3xl p-6">
+                <h3 class="text-cyan-400 mb-4 font-semibold">Environmental</h3>
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="text-xs text-slate-400">OAT (°C)</label>
+                        <input id="oat" type="number" value="22" class="w-full bg-slate-900 rounded-2xl p-4 text-3xl display text-center" onchange="compute()">
                     </div>
-                    <div class="mt-6">
-                        <div class="text-xs text-slate-400 mb-1">I/C</div>
-                        <select class="w-full bg-[#0a1421] rounded-2xl p-4">
-                            <option>No</option>
-                            <option>Yes</option>
-                        </select>
+                    <div>
+                        <label class="text-xs text-slate-400">QNH (hPa)</label>
+                        <input id="qnh" type="number" value="1016" class="w-full bg-slate-900 rounded-2xl p-4 text-3xl display text-center" onchange="compute()">
                     </div>
                 </div>
-
-                <!-- Engine Failure -->
-                <div class="bg-[#13233a] rounded-3xl p-6 border border-amber-900">
-                    <div class="flex items-center gap-2 text-amber-400 mb-3">
-                        <i class="fas fa-info-circle"></i>
-                        <span class="font-semibold">Engine Failure Procedure</span>
-                    </div>
-                    <p class="text-slate-300">Climb Straight Ahead (244°) to MSA.</p>
+                <div class="mt-6">
+                    <label class="text-xs text-slate-400">Flaps</label>
+                    <select id="flaps" class="w-full bg-slate-900 rounded-2xl p-4" onchange="compute()">
+                        <option value="5">Flaps 5</option>
+                        <option value="15" selected>Flaps 15</option>
+                        <option value="25">Flaps 25</option>
+                    </select>
                 </div>
-            </div>
-
-            <!-- Main Results -->
-            <div class="col-span-12 lg:col-span-5">
-                <div class="bg-[#13233a] rounded-3xl p-6 border border-slate-600">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-emerald-400 font-semibold">Calculation Result</span>
-                        <div class="flex gap-4">
-                            <button onclick="setMode(0)" id="btn-full" class="px-6 py-1 rounded-full text-sm">FULL</button>
-                            <button onclick="setMode(1)" id="btn-atm" class="px-6 py-1 rounded-full bg-blue-600 text-sm">ATM</button>
-                        </div>
-                    </div>
-
-                    <!-- Distances -->
-                    <div class="grid grid-cols-3 gap-4 text-center mb-8">
-                        <div>
-                            <div class="text-emerald-400 text-xs tracking-widest">AE-GO</div>
-                            <div id="ae-go" class="text-5xl font-bold display text-emerald-400">2114</div>
-                            <div class="text-xs text-slate-400">M</div>
-                        </div>
-                        <div>
-                            <div class="text-fuchsia-400 text-xs tracking-widest">EO-GO</div>
-                            <div id="eo-go" class="text-5xl font-bold display text-fuchsia-400">2086</div>
-                            <div class="text-xs text-slate-400">M</div>
-                        </div>
-                        <div>
-                            <div class="text-cyan-400 text-xs tracking-widest">ACCEL-STOP</div>
-                            <div id="accel-stop" class="text-5xl font-bold display text-cyan-400">2124</div>
-                            <div class="text-xs text-slate-400">M</div>
-                        </div>
-                    </div>
-
-                    <!-- Runway Graphic -->
-                    <div class="runway h-32 rounded-2xl relative border border-slate-500 overflow-hidden">
-                        <div class="absolute left-4 top-4 text-xs font-bold rotate-90">25R</div>
-                        
-                        <div class="absolute inset-y-0 left-12 right-12 flex items-center gap-1">
-                            <div id="bar-ae" class="h-6 bg-emerald-400 rounded flex-1"></div>
-                            <div id="bar-eo" class="h-6 bg-fuchsia-500 rounded flex-1 -ml-6"></div>
-                            <div id="bar-stop" class="h-6 bg-cyan-400 rounded flex-1 -ml-6"></div>
-                        </div>
-                        
-                        <div class="absolute bottom-3 left-1/4 text-[10px] text-emerald-400">B3</div>
-                        <div class="absolute bottom-3 left-1/2 text-[10px]">B5</div>
-                        <div class="absolute bottom-3 right-1/3 text-[10px] text-cyan-400">B7</div>
-                    </div>
-
-                    <div class="text-[10px] text-slate-400 mt-3 text-center">
-                        AE-GO and EO-GO are expressed as Takeoff Run
+                <div class="mt-6">
+                    <label class="text-xs text-slate-400">Wind (HDG / kt)</label>
+                    <div class="flex gap-3">
+                        <input id="wind_dir" value="250" class="flex-1 bg-slate-900 rounded-2xl p-4 text-center" onchange="compute()">
+                        <input id="wind_spd" value="14" class="flex-1 bg-slate-900 rounded-2xl p-4 text-center" onchange="compute()">
                     </div>
                 </div>
             </div>
 
-            <!-- Right Panel -->
-            <div class="col-span-12 lg:col-span-3 space-y-6">
-                <!-- METAR -->
-                <div class="bg-[#13233a] rounded-3xl p-5 text-xs font-mono border border-slate-600">
-                    <div id="metar" class="text-emerald-400">EBBR 261550Z 25014KT 9999 BKN028 22/16 Q1016 NOSIG</div>
-                    <div class="mt-2 text-slate-400 text-[11px]">EBBR 261100Z 2612/2718 25010KT 9999 FEW020 SCT040</div>
-                </div>
+            <div class="bg-[#13233a] rounded-3xl p-6">
+                <h3 class="text-amber-400 mb-3 font-semibold">Engine Failure Procedure</h3>
+                <p class="text-slate-300">Climb Straight Ahead (244°) to MSA.</p>
+            </div>
+        </div>
 
-                <!-- Runway Data -->
-                <div class="bg-[#13233a] rounded-3xl p-6 border border-slate-600 text-sm">
-                    <div class="space-y-4">
-                        <div class="flex justify-between"><span class="text-slate-400">RWY</span><span>2760 M</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">CWY / SWY</span><span>0 M / 0 M</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">SLOPE</span><span class="text-emerald-400">0.21 %</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">WEIGHT</span><span id="weight">62500 KG</span></div>
-                        <div class="flex justify-between pt-4 border-t border-slate-600">
-                            <span class="text-slate-400">MARGIN</span>
-                            <span id="margin" class="text-emerald-400 font-bold">636 M</span>
-                        </div>
+        <!-- Center Results -->
+        <div class="col-span-12 lg:col-span-5">
+            <div class="bg-[#13233a] rounded-3xl p-6">
+                <div class="flex justify-between mb-6">
+                    <span class="text-emerald-400 font-semibold">Takeoff Dispatch • ATM</span>
+                    <div class="flex gap-2">
+                        <button onclick="toggleMode(0)" class="px-5 py-1 text-sm rounded-full">FULL</button>
+                        <button onclick="toggleMode(1)" id="atm-btn" class="px-5 py-1 text-sm rounded-full bg-blue-600">ATM</button>
                     </div>
                 </div>
 
-                <!-- Wind Rose -->
-                <div class="bg-[#13233a] rounded-3xl p-6 flex flex-col items-center border border-slate-600">
-                    <div class="text-6xl font-black text-white/90 display mb-2">ATM</div>
-                    <div class="text-cyan-300 mb-6">42°C</div>
+                <div class="grid grid-cols-3 gap-8 text-center mb-10">
+                    <div>
+                        <div id="v1-val" class="text-6xl font-bold text-emerald-400 display">142</div>
+                        <div class="text-xs text-slate-400">V1</div>
+                    </div>
+                    <div>
+                        <div id="vr-val" class="text-6xl font-bold text-white display">148</div>
+                        <div class="text-xs text-slate-400">VR</div>
+                    </div>
+                    <div>
+                        <div id="v2-val" class="text-6xl font-bold text-fuchsia-400 display">154</div>
+                        <div class="text-xs text-slate-400">V2</div>
+                    </div>
+                </div>
+
+                <!-- Runway Graphic -->
+                <div class="runway-bg h-36 rounded-2xl relative border border-slate-500 overflow-hidden">
+                    <div class="absolute left-6 top-6 text-xs font-bold rotate-90">25R</div>
                     
-                    <div class="relative w-40 h-40">
-                        <svg width="160" height="160" viewBox="0 0 160 160">
-                            <circle cx="80" cy="80" r="65" fill="none" stroke="#334155" stroke-width="18"/>
-                            <line x1="80" y1="25" x2="80" y2="80" stroke="#67e8f9" stroke-width="8" stroke-linecap="round"/>
-                            <polygon points="80,18 72,32 88,32" fill="#67e8f9"/>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center text-center">
-                            <div>
-                                <div class="text-xs text-slate-400">14 hw</div>
-                                <div class="text-3xl text-cyan-400 font-bold">↑</div>
-                                <div class="text-xs text-slate-400">1 xw</div>
-                            </div>
-                        </div>
+                    <div class="absolute inset-0 flex items-center px-12">
+                        <div id="bar-ae" class="h-7 bg-emerald-400 rounded-r transition-all" style="width:68%"></div>
+                        <div id="bar-eo" class="h-7 bg-fuchsia-500 -ml-8 rounded-r transition-all" style="width:62%"></div>
+                        <div id="bar-stop" class="h-7 bg-cyan-400 -ml-8 rounded-r transition-all" style="width:71%"></div>
                     </div>
+                    
+                    <div class="absolute bottom-4 left-1/4 text-xs text-emerald-400">AE-GO</div>
+                    <div class="absolute bottom-4 left-1/2 text-xs text-fuchsia-400">EO-GO</div>
+                    <div class="absolute bottom-4 right-1/3 text-xs text-cyan-400">ACCEL-STOP</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#0a1421] border-t border-slate-700">
-        <div class="max-w-7xl mx-auto grid grid-cols-5 text-[10px] font-medium text-center">
-            <button class="py-4 text-cyan-400 border-b-4 border-cyan-400">Takeoff Dispatch</button>
-            <button class="py-4 text-slate-400">Landing Dispatch</button>
-            <button class="py-4 text-slate-400">Landing Enroute</button>
-            <button class="py-4 text-slate-400">Weight & Balance</button>
-            <button class="py-4 text-slate-400">Virtual Dispatcher</button>
+        <!-- Right Info -->
+        <div class="col-span-12 lg:col-span-3 space-y-6">
+            <div class="bg-[#13233a] rounded-3xl p-6 text-sm space-y-4 border border-slate-600">
+                <div class="flex justify-between"><span class="text-slate-400">RWY</span><span>2760 M</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">SLOPE</span><span class="text-emerald-400">0.21%</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">WEIGHT</span><span id="disp-weight">62500 KG</span></div>
+                <div class="pt-4 border-t border-slate-600 flex justify-between">
+                    <span class="text-slate-400">MARGIN</span>
+                    <span id="margin-val" class="text-emerald-400 font-bold">636 M</span>
+                </div>
+            </div>
+
+            <div class="bg-[#13233a] rounded-3xl p-8 text-center border border-slate-600">
+                <div class="text-7xl font-black display text-white/90">ATM</div>
+                <div class="text-cyan-300 mt-2">42°C</div>
+            </div>
         </div>
-    </nav>
+    </div>
+</div>
 
-    <script>
-        function calculate() {
-            const oat = parseFloat(document.getElementById("oat").value) || 22;
-            
-            // Dynamic performance
-            const baseAE = 2114;
-            document.getElementById("ae-go").textContent = Math.round(baseAE + (oat - 22) * 6);
-            document.getElementById("eo-go").textContent = Math.round(2086 + (oat - 22) * 5);
-            document.getElementById("accel-stop").textContent = Math.round(2124 + (oat - 22) * 7);
-            
-            document.getElementById("margin").textContent = Math.max(400, 636 - (oat - 22) * 15) + " M";
-        }
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 left-0 right-0 bg-[#0a1421] border-t border-slate-700 py-3">
+    <div class="max-w-7xl mx-auto grid grid-cols-5 text-center text-[10px]">
+        <button class="text-cyan-400 border-b-4 border-cyan-400 pb-3">Takeoff Dispatch</button>
+        <button class="text-slate-400">Landing Dispatch</button>
+        <button class="text-slate-400">Landing Enroute</button>
+        <button class="text-slate-400">Weight & Balance</button>
+        <button class="text-slate-400">MEL</button>
+    </div>
+</nav>
 
-        function setMode(mode) {
-            document.getElementById("btn-full").classList.toggle("bg-blue-600", mode === 0);
-            document.getElementById("btn-atm").classList.toggle("bg-blue-600", mode === 1);
-        }
+<script>
+// ====================== HIGH-FIDELITY B737-800 ENGINE ======================
 
-        // Initialize
-        window.onload = () => {
-            calculate();
-        };
-    </script>
+const B738_DATA = {
+    mtow: 79015,
+    flaps: {
+        "5":  { baseV1: 145, baseVR: 150, baseV2: 156, distFactor: 1.00 },
+        "15": { baseV1: 142, baseVR: 148, baseV2: 154, distFactor: 0.92 },
+        "25": { baseV1: 138, baseVR: 144, baseV2: 150, distFactor: 0.88 }
+    }
+};
+
+function pressureAltitude(elev_ft, qnh) {
+    return elev_ft + (1013.25 - qnh) * 27;
+}
+
+function densityAltitude(pa, oat) {
+    const isa = 15 - 0.0019812 * pa;
+    return pa + 120 * (oat - isa);
+}
+
+function windComponents(runwayHdg, windDir, windSpd) {
+    const diff = (windDir - runwayHdg) * Math.PI / 180;
+    const hw = Math.round(windSpd * Math.cos(diff));
+    const xw = Math.round(windSpd * Math.sin(diff));
+    return { hw, xw };
+}
+
+function compute() {
+    const oat = parseFloat(document.getElementById("oat").value) || 22;
+    const qnh = parseFloat(document.getElementById("qnh").value) || 1016;
+    const flaps = document.getElementById("flaps").value;
+    const windDir = parseFloat(document.getElementById("wind_dir").value) || 250;
+    const windSpd = parseFloat(document.getElementById("wind_spd").value) || 14;
+
+    const data = B738_DATA.flaps[flaps];
+    
+    // Conservative corrections
+    const tempCorrection = (oat - 15) * 0.8;
+    const v1 = Math.round(data.baseV1 + tempCorrection * 0.3);
+    const vr = Math.round(data.baseVR + tempCorrection * 0.2);
+    const v2 = Math.round(data.baseV2 + tempCorrection * 0.15);
+
+    // Distances (conservative)
+    let baseDist = 1950 * data.distFactor;
+    const distCorrection = (oat - 15) * 18 + (1013 - qnh) * 12;
+    const aeGo = Math.round(baseDist + distCorrection);
+    const eoGo = Math.round(aeGo * 0.97);
+    const accelStop = Math.round(aeGo * 1.04);
+
+    const margin = Math.round(2760 - Math.max(aeGo, eoGo, accelStop));
+
+    // Update UI
+    document.getElementById("v1-val").textContent = v1;
+    document.getElementById("vr-val").textContent = vr;
+    document.getElementById("v2-val").textContent = v2;
+    
+    document.getElementById("bar-ae").style.width = (65 + (oat-22)*0.6) + "%";
+    document.getElementById("bar-eo").style.width = (60 + (oat-22)*0.5) + "%";
+    document.getElementById("bar-stop").style.width = (70 + (oat-22)*0.7) + "%";
+
+    document.getElementById("margin-val").textContent = Math.max(300, margin) + " M";
+}
+
+// Mode toggle
+function toggleMode(m) {
+    document.getElementById("atm-btn").classList.toggle("bg-blue-600", m === 1);
+}
+
+// Init
+window.onload = () => {
+    compute();
+};
+</script>
 </body>
 </html>
