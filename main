@@ -1,0 +1,25 @@
+from fastapi import FastAPI
+from metar import fetch_metar, parse_metar
+from airports import get_airport
+from performance import compute_takeoff
+
+app = FastAPI()
+
+@app.get("/takeoff")
+def takeoff(icao: str, runway: str, weight: int = 65000):
+
+    raw = fetch_metar(icao)
+    metar = parse_metar(raw)
+
+    airport = get_airport(icao)
+    rw = airport["runways"][runway]
+
+    result = compute_takeoff(airport, rw, metar, weight)
+
+    return {
+        "airport": icao,
+        "runway": runway,
+        "metar_raw": raw,
+        "metar_parsed": metar,
+        "result": result
+    }
